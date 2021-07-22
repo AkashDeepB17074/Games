@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>MineSweeper
+    </title>
+    <style>
+  body {
+  font-family: Courier;
+  font-style: bold;
+  background: #fdfcfc;
+  color: #635e5e;
+  font-weight: 300;
+  height: 100vh;
+  margin: 0;
+  /* display: flex; */
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  font-family: Helvetica neue, roboto;
+}
+.container{
+  width: 100%;
+  margin-top: 50px;
+  /* margin-left: 50%;
+  transform: translateX(-50%); */
+}
+
+img {
+  width: 56px;
+  height: 48px;
+}
+
+h1 {
+  font-weight: 200;
+  font-style: 26px;
+  margin: 10px;
+}
+.area{
+  background: black;
+  margin: auto;
+  box-shadow: black 10px 10px 10px;
+}
+.row{
+
+}
+.cell{
+  background: #161616;
+  cursor: pointer;
+  height: 30px;
+  color: #161616;
+  width: 30px;
+  margin: auto;
+  text-align: center;
+  font-size: 10pt;
+  transition: .5s;
+  
+}
+.cell:hover{
+  background: #272424;
+  color: #272424;
+}
+.menu{
+  margin-top: 20px;
+  /* display: block; */
+}
+.flag{
+  height: 40px;
+  
+  font-family:'Courier New', Courier, monospace;
+  font-size: 12pt;
+  /* text-shadow: rgb(177, 162, 162) 3px 2px 1px; */
+  font-style: bold;
+  width: 40px;
+  text-align: center;
+  margin-left: 10px;
+  box-shadow: black 5px 5px 10px;
+  
+}
+.mineArea{
+box-shadow: black 5px 5px 10px;
+  height: 40px;
+  width: 80px;
+  text-align: center;
+  margin-left: 10px;
+}
+label{
+  
+  font-family:'Courier New', Courier, monospace;
+  font-size: 12pt;
+  /* text-shadow: rgb(177, 162, 162) 3px 2px 1px; */
+  font-style: bold;
+  margin-left: 10px;}
+.Go{
+  box-shadow: black 5px 5px 10px;
+  height: 40px;
+  width: 40px;
+  margin-left: 10px;
+  
+  font-family:'Courier New', Courier, monospace;
+  font-size: 12pt;
+  /* text-shadow: rgb(177, 162, 162) 3px 2px 1px; */
+  font-style: bold;
+}
+input[type=number]::-webkit-inner-spin-button, 
+input[type=number]::-webkit-outer-spin-button { 
+  -webkit-appearance: none; 
+  margin: 0; 
+}
+.score{
+  
+  font-family:'Courier New', Courier, monospace;
+  box-shadow: black 5px 5px 10px;
+  font-size: 12pt;
+  /* text-shadow: rgb(177, 162, 162) 3px 2px 1px; */
+  font-style: bold;
+  margin: auto;
+  height: 40px;
+  width: 40px;
+  text-align: center;
+  margin-left: 10px;
+}
+.mineArea{
+  
+  font-family:'Courier New', Courier, monospace;
+  font-size: 12pt;
+  /* text-shadow: rgb(177, 162, 162) 3px 2px 1px; */
+  font-style: bold;
+  /* color: red; */
+}
+
+
+    </style>
+</head>
+<body>
+  <div class="menu">
+    <label>score</label>
+    <input type="number" class="score" placeholder="00" readonly="readonly">
+    <select class="mineArea">
+      <option value="easy">Easy</option>
+      <option value="medium">Medium</option>
+      <option value="hard">Hard</option>
+      <option value="legend">Legend</option>
+    </select>
+    <button class="Go" onclick="startGame()">GO</button>
+    <input type="number" class="flag" value="10" readonly="readonly">
+  </div><br>
+    <div class="container">
+        <table class='area'>
+           
+        </table>
+      
+      </div>
+</body>
+<script>
+  var tab;
+  var maxL; // stores row number
+  var max;  // no of mines
+  var score=0;
+  var flag;
+  var game = 0;
+  var cells;
+  var interupt = 0;
+  // createTable(15, 20)
+  function startGame(){
+    if(interupt){
+      alert("game Going on")
+      interupt =0
+      return 
+    }
+    interupt = 1
+    game = 0;
+    var item = document.getElementsByClassName('mineArea')[0].value
+    if(item == "easy"){
+      maxL = 10;
+      max = 10;
+    }else if(item == "medium"){
+      maxL = 20;
+      max = 40;
+    }else if(item == "hard"){
+      maxL = 25;
+      max = 70;
+    }else if(item == "legend"){
+      maxL = 22;
+      max = 100;
+    }
+    cells = (maxL)*(maxL)
+    createTable(maxL, max)
+  }
+
+
+
+
+
+
+
+
+    function createTable(maxR, max){
+      tab = document.getElementsByClassName('area')[0];
+      while(tab.firstChild){
+        tab.removeChild(tab.firstChild)
+      }
+      for(let i=0; i<maxR; i++){
+        var r = document.createElement('tr');
+        r.setAttribute('class', 'row')
+        tab.appendChild(r);
+        for(let j=0; j<maxR; j++){
+          var c = document.createElement('td')
+          c.setAttribute('class', 'cell');
+          c.setAttribute('onClick', 'action(this)')
+          c.setAttribute('activate', false)
+          c.setAttribute('inStack', false)
+          c.setAttribute('move', false)
+          node = document.createTextNode('')
+          c.appendChild(node);
+          r.appendChild(c);
+        }
+      }
+      
+      for(let k=0; k<max; k++){
+        x = parseInt(Math.random()*(maxR - 0) + 0);
+        y = parseInt(Math.random()*(maxR-0) + 0);
+        var r = document.getElementsByClassName('row')[x].childNodes[y]
+        if(r.textContent == "x"){
+          k = k -1
+          console.log('collision')
+          continue
+        }
+        r.textContent = "x"
+        p = x-1
+        q = y-1
+        // console.log("hey this cell " ,x,y, r);
+        for(let i=0; i<3; i++){
+          for(let j=0; j<3; j++){
+          // console.log("maxR", maxR, p+i, q+j)
+            if(p+i<maxR && p+i>=0 && q+j<maxR && q+j>=0){
+              r = document.getElementsByClassName('row')[p+i].childNodes[q+j];
+              // console.log("this" ,r, x, y)
+              // console.log("blis", r.textContent)
+              if(r.textContent==""){
+                r.textContent = "1"
+              }else if(r.textContent=="x"){
+                // console.log('yes this is x')
+              }else{
+                r.textContent = parseInt(r.textContent) +1;
+              }
+            }
+          }
+        } 
+      }
+
+
+    }
+
+
+class Node{
+  constructor(x, y){
+    this.x = x;
+    this.y = y;
+  }
+  changeNode(x, y){
+    this.x = x;
+    this.y = y;
+  }
+}
+
+class Stack{
+  constructor(){
+    this.items =[];
+  }
+
+  push(element){
+    this.items.push(element);
+  }
+  pop(){
+    if(this.items.length){
+      return this.items.pop();
+    }
+  }
+  peek(){
+    return this.items[this.items.length -1];
+  }
+  isEmpty(){
+    if(this.items.length == 0)
+      return true
+  }
+
+}
+
+function currentCell(x, y){
+  return document.getElementsByClassName('row')[y].childNodes[x]
+  
+}
+function checkWin(){
+  f =0
+  for(let i=0; i<maxL; i++){
+    for(let j=0; j<maxL; j++){
+      r = currentCell(i, j)
+      if(r.textContent!="x" && r.attributes.activate.value == "false"){
+        console.log("notWin")
+        f = 1
+      }
+    }
+  }
+  if(f == 1){
+    console.log("notwin")
+  }else{
+    console.log("YOU win")
+    alert('hey')
+    game =1
+  }
+}
+
+function gameOver(){
+  k = max
+  game = 1
+  for(let i=0; i<maxL; i++){
+    for(let j=0; j<maxL; j++){
+      if(k == 0){
+        console.log('break')
+        break;
+      }
+      r = document.getElementsByClassName('row')[j].childNodes[i]
+      // console.log(r)
+      if(r.textContent=="x"){
+        r.style.background = "white"
+        r.style.color ='black'
+        k = k-1;
+      }
+        
+    }
+  }
+  interupt = 0;
+  console.log("You loose")
+  // alert("gameOver");
+}
+
+function emptyThis(r){
+  cells = cells-1;
+  console.log(cells)
+  if(cells-1 <= max){
+    checkWin()
+    console.log('check')
+  }
+  if(r.textContent == "x")
+    return
+  r.style.background = 'white';
+  r.style.color = 'black'
+  // console.log("this will be empty", r);
+}
+
+function emptyAll(e){
+  y = e.parentElement.rowIndex
+  x = e.cellIndex
+  var stack = new Stack();
+  var node = new Node(x, y);
+  var temp = new Node(x, y);
+  stack.push(node)
+  // console.log("current points", x, y)
+  var k = currentCell(x, y)
+  k.setAttribute("instack", true)
+  while(!stack.isEmpty()){
+    currentNode = stack.pop();
+    temp.x = 0;
+    temp.y = 0;
+    // console.log("temp",  temp, "currentNode", currentNode)
+    if(currentCell(currentNode.x, currentNode.y).attributes.activate.value == "false"){
+      currentCell(currentNode.x, currentNode.y).setAttribute("activate", true)
+      emptyThis(currentCell(currentNode.x, currentNode.y))
+      r = currentCell(currentNode.x, currentNode.y)
+    }
+    
+    for(let i=1; i<=4; i++){
+      temp.x = currentNode.x + ((i==1)?(-1):((i==2)?(1):(0)))
+      temp.y = currentNode.y + ((i==3)?(-1):((i==4)?(1):(0)))
+      // console.log("temp", temp.x, temp.y)
+      if(r.textContent!=""){
+        // console.log('hey')
+        continue
+      }
+      if(temp.x>=0 && temp.x<maxL && temp.y>=0 && temp.y<maxL){
+        r1 = currentCell(temp.x, temp.y)
+        // console.log('yes')
+        if(r1.attributes.instack.value == "false"){
+          var node = new Node(temp.x, temp.y);
+          // console.log(r1, node.x, node.y)
+          r1.setAttribute('instack', true)
+          stack.push(node)
+          // console.log("staack", stack)
+          currentCell(node.x, node.y).setAttribute('instack', true)
+        }
+      }
+    }
+
+
+  }
+  
+}
+
+
+
+function action(e){
+  if(game == 1){
+    return
+  }
+  if(e.attributes.activate.value == "false"){
+    if(e.textContent){
+      if(e.textContent == "x"){
+        gameOver();
+      }else{
+        e.setAttribute('activate', true)
+        emptyThis(e)
+      }
+    }else{
+      emptyAll(e);
+    }
+  }
+}
+
+document.addEventListener('click', function(e){
+  console.log(e)
+})
+
+
+</script>
+</html>
