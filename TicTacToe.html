@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<!-- saved from url=(0050)file:///C:/Users/King_Deep/Desktop/test%20(2).html -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Test</title>
+    <style>
+        .container{
+            padding: 20px;
+            background: -webkit-linear-gradient(left, #11a567, #149eaa);
+            font-family: 'Roboto', sans-serif;
+            margin: auto;
+        }
+        table{
+            padding: 10px;
+            table-layout: fixed;
+            border-collapse: collapse;
+            /* border: 6pt solid black; */
+            margin: auto;
+        }
+        tr{
+            /* border: 6pt solid black; */
+            border-collapse: collapse;
+        }
+        td{
+            font-size: 82pt;
+            text-align: center;
+            background: -webkit-linear-gradient(rgba(138, 22, 216, 0.897), rgba(29, 7, 233, 0.863));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            border: 6pt solid rgba(225, 225, 225, 0.3);
+            border-collapse: collapse;
+            height: 200px;
+            width: 200px;
+            background-color: rgba(225,225,225,0.4);
+        }
+        td:hover{
+            background: -webkit-linear-gradient(rgba(138, 22, 216, 0.397), rgba(29, 7, 233, 0.363));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        table.board{
+            border-radius: 50px;
+            margin-top: 20px;
+            margin: auto;
+            font-size: 24pt;
+            width: 800px;
+        }
+
+        td.board{
+            padding: 20px;
+            margin-top: 20px;
+            height: 20px;
+            font-size: 24pt;
+            /* color: #fff; */ 
+            font-style: bold;
+            background: -webkit-linear-gradient(rgb(4, 10, 90), rgb(42, 11, 116));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .popup{
+            position: relative;
+            /* display: inline-block; */
+            cursor: pointer;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+        
+        .popuptext{
+            visibility: hidden;
+            width: 400px;
+            font-size: 24pt;
+            background-color: #555;
+            color: #fff;
+            text-align: center;
+            border-radius: 6px;
+            padding: 12px 0;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            margin:aito;
+            margin-left: -80px;
+
+        }
+        
+        .popuptext::after{
+            content: "";
+            position: absolute;
+            top: 100%;
+            left:50%;
+            margin-left: -5px;
+            border-width: 5px;
+            border-style: solid;
+            border-color: #555 transparent transparent transparent;
+        }
+        
+        
+        .show{
+            visibility: visible;
+            -webkit-animation: fadeIn 1s;
+            animation: fadeIn 1s;
+        }
+        @-webkit-keyframes fadeIn{
+            from{opacity: 0;}
+            to{opacity: 1;}
+        }
+        @keyframes fadeIn{
+            from{opacity: 0;}
+            to{opacity: 1;}
+        }
+
+
+    </style>
+</head>
+<body>
+    <div class="container">
+
+        
+        <table>
+            <tbody><tr>
+                <td id="node1" onclick="putValue(1)"> </td> 
+                <td id="node2" onclick="putValue(2)"> </td> 
+                <td id="node3" onclick="putValue(3)"> </td>
+            </tr>
+            <tr>
+                <td id="node4" onclick="putValue(4)"> </td> 
+                <td id="node5" onclick="putValue(5)"> </td> 
+                <td id="node6" onclick="putValue(6)"> </td>
+            </tr>
+            <tr>
+                <td id="node7" onclick="putValue(7)"> </td>
+                <td id="node8" onclick="putValue(8)"> </td> 
+                <td id="node9" onclick="putValue(9)"> </td>
+            </tr>
+        </tbody></table>
+        <br>
+        <br>
+        
+        <div class="popup" onclick="myFunction()">
+            <span class="popuptext" id="myPopup"></span>
+        </div>
+
+        <table class="board">
+            <tbody><tr class="board">
+                <td colspan="2" class="board">Score<br><p style="text-align: left; display: inline;">p1</p> <p style="text-align: right;display: inline;">p2</p>
+                </td>
+                <td class="board">Match Number</td>
+                <td class="board">Turn</td>
+            </tr>
+            <tr class="board">
+                    <td class="board" id="p1">0</td>
+                    <td class="board" id="p2">0</td>
+                    <td class="board" id="match">1</td>
+                    <td class="board" id="turn">Player 1</td>
+            </tr>
+        </tbody></table>
+    </div>
+    
+    <script>
+        var a = 0;
+        // var n1 = document.getElementById('player1').textContent
+        // var n2 = document.getElementById('player2').textContent
+        var move = 0;
+        var p1=0, p2=0, match=1;
+        const score = [0,0]
+        var f=0
+        const array = [-1,-1,-1,-1,-1,-1,-1,-1,-1]
+        const check = [0, 0, 0, 0, 0, 0, 0, 0, 0]
+
+        document.addEventListener('keyup', (event)=>{
+            if(parseInt(event.key)>3 && parseInt(event.key)<7){
+                putValue(parseInt(event.key))
+            }
+            else if(parseInt(event.key)>6 && parseInt(event.key)<10){
+                putValue(parseInt(event.key)-6)
+            }
+            else if(parseInt(event.key)>0 && parseInt(event.key)<4){
+                putValue(parseInt(event.key)+6)
+            }
+        }, false);
+
+        function reset(){
+            for(let i=0; i<9; i++){
+                if(check[i] != 0){
+                    let k = i+1
+                    var n = 'node'+k
+                    document.getElementById(n).textContent = ''
+                }
+            }
+            
+            for(let i=0; i<9; i++){
+                array[i] = -1
+                check[i] = 0
+            }
+            
+        }
+
+        function whoWon(b){
+            console.log(`player ${b+1} won`)
+            if(b==1){
+                score[0] = score[0]+1
+                p1++
+                match++
+                document.getElementById('match').textContent = match
+                document.getElementById('p1').textContent = p1
+                var popup = document.getElementById('myPopup');
+                popup.textContent = "Player 1 Won"
+                popup.classList.toggle("show");
+                f=1
+            }
+            else if(b==0){
+                score[1]==score[1]+1 
+                match++
+                p2++
+                document.getElementById('match').textContent = match
+                document.getElementById('p2').textContent = p2
+                var popup = document.getElementById('myPopup');
+                popup.textContent = "Player 2 Won"
+                popup.classList.toggle("show");
+                f=1
+            }
+
+        }
+
+        function checkWin(){
+
+
+            for(let i=0; i<3; i++){
+                if(array[i]!=-1 && (array[i]==array[i+3] && array[i+3]==array[i+6])){
+                    whoWon(array[i])
+                    move=0
+                    break   
+                }
+            }
+
+            for(let i=0; i<9; i=i+3){
+                if(array[i]!=-1 && (array[i]==array[i+1] && array[i+1]==array[i+2])){
+                    whoWon(array[i])
+                    move=0
+                    break
+                }
+            }
+
+            if(array[0]!=-1 && (array[0]==array[4] && array[4]==array[8])){
+                whoWon(array[0])
+                move=0
+            }
+            else if(array[2]!=-1 && (array[2]==array[4] && array[4]==array[6])){
+                whoWon(array[2])
+                move=0
+            }
+            else if(move>8){
+                console.log("Draw Match")
+                move=0
+                match++ 
+                document.getElementById('match').textContent = match
+                var popup = document.getElementById('myPopup');
+                popup.textContent = "Match Draw"
+                popup.classList.toggle("show");
+                f=1
+            }
+        }
+
+        function putValue(b){
+            let name = 'node'+b
+            if(f==1){
+                var popup = document.getElementById('myPopup');
+                popup.classList.toggle("show");
+                f=0
+                reset()
+            }
+            if(a%2==0 && check[b-1]==0){
+                document.getElementById(name).appendChild(document.createTextNode('X'))
+                check[b-1]=1
+                array[b-1]=1
+                a++
+                move++
+                document.getElementById('turn').textContent = 'Player 2'
+                checkWin()
+            }
+            else if(a%2!=0 && check[b-1]==0){
+                document.getElementById(name).appendChild(document.createTextNode('O'))
+                check[b-1]=1
+                array[b-1]=0
+                a++
+                move++
+                document.getElementById('turn').textContent = 'Player 1'
+                checkWin()
+            }
+        }
+
+    </script>
+
+</body></html>
