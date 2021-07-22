@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Calculator</title>
+    <link rel="stylesheet" type="text/css" href="calculator.css">
+</head>
+<body>
+<div id="body">
+    <div id="calButtonsDiv">
+        <table id="calButtons">
+            <td colspan="4" id="screen"><p>Screen</p></td>
+            <tr>
+                <td><input type="button" id="button_1" onclick="input('c')" value="C"></td>
+                <td><input type="button" id="button_1" onclick="input('*')" value="*"></td>
+                <td><input type="button" id="button_1" onclick="input('/')" value="/"></td>
+                <td><input type="button" id="button_1" onclick="input('-')" value="-"></td>
+            </tr>
+            <tr>    
+                <td><input type="button" id="button_1" onclick="input(7)" value="7"></td>
+                <td><input type="button" id="button_1" onclick="input(8)" value="8"></td>
+                <td><input type="button" id="button_1" onclick="input(9)" value="9"></td>
+                <td rowspan="2"><input type="button" id="button_1" onclick="input('+')" value="+"></td>
+            </tr>
+            <tr>
+                <td><input type="button" id="button_1" onclick="input(4)" value="4"></td>
+                <td><input type="button" id="button_1" onclick="input(5)" value="5"></td>
+                <td><input type="button" id="button_1" onclick="input(6)" value="6"></td>
+            </tr>
+            <tr>
+                <td><input type="button" id="button_1" onclick="input(1)" value="1"></td>
+                <td><input type="button" id="button_1" onclick="input(2)" value="2"></td>
+                <td><input type="button" id="button_1" onclick="input(3)" value="3"></td>
+                <td rowspan="2"><input type="button" id="button_1" onclick="input('=')" value="="></td>
+            </tr>
+            <tr>
+                <td colspan="2"><input type="button" id="button_1" onclick="input(0)" value="0"></td>
+                <td><input type="button" id="button_1" onclick="input('.')" value="."></td>
+            </tr>
+        </table>
+    </div>
+</div>
+
+<script src="calculator.js"></script>
+</body>
+</html>
