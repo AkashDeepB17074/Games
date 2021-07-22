@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Snake&block</title>
+</head>
+<style>
+    .container{
+        position: relative;
+        margin:auto;
+        margin-top: 50px;
+        height: 700px;
+        width: 100%;
+        text-align: center;
+        /* background: blue; */
+    }
+    .score{
+        margin-top: 0;
+    }
+    input[type=number]::-webkit-inner-spin-button, 
+    input[type=number]::-webkit-outer-spin-button { 
+    -webkit-appearance: none; 
+    margin: 0;
+    } 
+    .block{
+        height: 10px;
+        width: 10px;
+        background: black;
+    }
+
+    .canvas{
+        margin: auto;
+        background: rgb(137, 43, 226);
+        transition: 2s;
+    }
+    .score{
+        margin: auto;
+        margin-bottom: 50px;
+        height: 40px;
+        width:80px;
+        max-width: 120px;
+        overflow: hidden;
+        color:blueviolet;
+        text-align: center;
+        box-shadow: rgb(128, 125, 125) 5px 5px 5px 2px;
+        display: block;
+        font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+        font-size: 18pt;
+        font-style: bold;
+        text-shadow: rgb(131, 111, 219) 1px 1px 3px;
+    }label{
+        font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+        font-size: 14pt;
+        font-style: bold;
+        text-shadow: rgb(106, 62, 207) 1px 1px 3px;
+    }.message{
+        height: 100px;
+        display: flex;
+        width: 400px;
+        background: cadetblue;
+        position: absolute;
+        top:50%;
+        left: 0;
+        margin-left: 50%;
+        align-items: center;
+        align-content: center;
+        transform: translateX(-50%);
+        text-align: center;
+        box-shadow: 5px 5px 10px  rgb(49, 48, 54);
+    }
+    .msg{
+        text-decoration:solid underline overline;
+        font-size: 16pt;
+        width: 100%;
+
+    }
+
+
+</style>
+<body>
+    <div class="container">
+        <!-- <img src="sprites/snake.png" class="source"> -->
+        <label>Score</label>
+        <input type="number" class="score">
+        <canvas class="canvas"></canvas>
+        <!-- <div class="message"><label class="msg">PRESS ENTER TO START GAME</label></div> -->
+
+    </div>
+    <!-- <canvas id="canvas"></canvas> -->
+<!-- <div style="display:none;"> -->
+  <!-- <img id="source"
+       src="https://mdn.mozillademos.org/files/5397/rhino.jpg"
+       width="300" height="227"> -->
+</div>
+    
+</body>
+<script>
+    var div, lab;
+    messageBox("PRESS ENTER TO START THE GAME", "black");
+    function messageBox(node, color){        
+        div = document.createElement('div')
+        div.setAttribute('class', 'message')
+        lab = document.createElement('label')
+        lab.setAttribute('class', 'msg')
+        lab.appendChild(document.createTextNode(node))
+        lab.style.color = color
+        div.appendChild(lab)
+        document.getElementsByClassName('container')[0].appendChild(div)
+
+    }
+
+    const canvas = document.getElementsByClassName('canvas')[0]
+    canvas.height = 700;
+    canvas.width =700;
+    const ctx = canvas.getContext("2d")
+    
+    // required components 
+    const size = 35;
+    var d, eatFood = false, eatSnake = false;
+    const maxR = canvas.height/size;
+    var snake = [];
+    snake[0] = {x:10*size, y:10*size}
+    snake[1] = {x:(10+1)*size, y:(10)*size}
+    let food = {
+        x: parseInt(Math.random()*(maxR-0) + 0)*size,
+        y: parseInt(Math.random()*(maxR-0) + 0)*size
+    }
+    let newHead = {
+        x: 0, 
+        y:0
+    }
+    var score=0;
+   
+
+
+    let snakeImage = new Image();
+    snakeImage.src = "sprites/snake.png";
+    snakeImage.onload = draw1;
+    let headImage = new Image();
+    headImage.src = "sprites/head.png";
+    headImage.onload = draw;
+    let foodImage = new Image();
+    foodImage.src = "sprites/food.png";
+    foodImage.onload = drawFood
+    
+    let eatAudio = new Audio();
+    eatAudio.src = "sprites/EatSound.ogg";
+    let dieAudio = new Audio();
+    dieAudio.src = "sprites/DieSound.ogg";
+    function draw1(){
+        console.log("hey")
+    }
+
+
+    function draw(){
+        document.getElementsByClassName('score')[0].value = score;
+        ctx.clearRect(0,0, canvas.height, canvas.width)
+        drawFood()
+        drawSnake()
+    }
+    var flag = 0
+    function drawSnake(){
+        
+        if(d=='up'){
+            newHead = {x: snake[0].x, y: snake[0].y -size}
+        }if(d=='down'){
+                newHead = {x: snake[0].x, y: snake[0].y+size}
+        }if(d=='left'){
+                newHead = {x: snake[0].x -size, y: snake[0].y}
+        }if(d=='right'){
+            newHead = {x: snake[0].x +size, y: snake[0].y}
+        }
+        checkCollision()
+        console.log(flag)
+        if(eatSnake == false && flag == 1){
+            snake.unshift(newHead)
+            console.log("shift occur")
+        }if(eatFood == false && flag == 1 && eatSnake == false){
+            console.log("pop")
+            snake.pop()
+        }
+        
+        for(let i=0; i<snake.length; i++){
+            if(i!=0){
+                ctx.drawImage(snakeImage, snake[i].x, snake[i].y, size, size);
+            }else{
+                ctx.drawImage(headImage, snake[i].x, snake[i].y, size, size);
+            }
+        }
+        eatFood = false
+    }
+    function drawFood(){
+        if(eatSnake == true)
+            return
+        ctx.drawImage(foodImage, food.x, food.y, size, size)
+    }
+
+    function checkCollision(){
+        if(eatSnake == true)
+            return
+        head = newHead
+        if(head.x == food.x && head.y == food.y){
+            food = {
+                x: parseInt(Math.random()*(maxR-0) + 0)*size,
+                y: parseInt(Math.random()*(maxR-0) + 0)*size
+            }
+            console.log("collision occur")
+            eatAudio.play()
+            score = 10+ score
+            eatFood =  true
+        }
+        for(let i=1; i<snake.length; i++){
+            if(head.x == snake[i].x && snake[i].y == head.y){
+                gameOver()
+            }
+        }
+        if(head.x < 0 || head.x > canvas.width-size || head.y <0 || head.y > canvas.height-size){
+            gameOver()
+        }
+    }
+    
+    function gameOver(){
+        if(eatSnake == true)
+            return
+        messageBox("GameOver", "red")
+        dieAudio.play();
+        console.log("gameOver")
+        eatSnake = true
+    }
+
+    let game = setInterval(draw, 200)
+
+    document.addEventListener('keydown', (e)=>{
+        console.log(e.key)
+        if((e.key =="ArrowUp"   || e.key == "w") && d!="down" ){ d = 'up'   }
+        if((e.key =="ArrowDown" || e.key == "s") && d!="up"   ){ d = 'down' }
+        if((e.key =="ArrowLeft" || e.key == "a") && d!="right"){ d = 'left' }
+        if((e.key =="ArrowRight"|| e.key == "d") && d!="left" ){ d = 'right'}
+        if(e.key == "Enter"){
+            document.getElementsByClassName('container')[0].removeChild(div)
+            flag = 1
+            d = "left"
+
+        }
+        // draw()
+
+    })
+    // audio.play()
+    // k = document.querySelectorAll('img')[0]
+    // // console.log(k)
+    // ctx.drawImage(snakeImage, 10, 10, 50, 50);
+    // // ctx.stroke()
+    
+    // function draw(){
+    //     drawSnake()
+    //     // snakeImage.onload = drawSnake
+    //     foodImage.onload = drawFood;
+    // }
+
+    // function drawFood(){
+    //     x = parseInt(Math.random()*(maxR-0) + 0)*size;
+    //     y = parseInt(Math.random()*(maxR-0) + 0)*size;
+    //     ctx.drawImage(foodImage,x,y, size, size)
+        
+    // }
+    // function drawSnake(){
+    //     for(let i=0; i<snake.length; i++){
+    //         console.log(i)
+    //         if(i == 0){
+    //             ctx.drawImage(headImage, snake[i].x, snake[i].y, size, size)
+    //             continue
+    //         }
+    //         ctx.drawImage(snakeImage, snake[i].x, snake[i].y, size, size);
+    //     }
+
+    // }
+
+    // document.addEventListener('keydown', function (e){
+    //     if(e.key=="ArrowUp" || e.key == "w"){
+    //         d += size
+    //     }
+    // })
+
+    // let game = setInterval(draw, 100);
+    // // console.log(snake)
+
+
+
+</script>
+  
+
+</html>
