@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    
+    <script src="https://kit.fontawesome.com/2d37f2dec9.js"></script>
+    <title>Todo List</title>
+
+    <style>
+        body{
+            /* background-image: linear-gradient(90deg,rgb(244, 242, 247), #C4E0E5); */
+            margin:0;
+            padding: 0;
+        }
+
+        .container{
+            background-image: linear-gradient(120deg,#ff9a9e,#fad0c4);
+            height: 700px;
+            width: 550px;
+            margin-top: 150px;
+            margin-left: 50%;
+            transform: translateX(-50%);
+            border-radius: 20px;
+            box-shadow: 6px 6px 6px#3e3f3f;
+        }
+        .search-bar{
+            position: absolute;
+            left: 50%;
+            transform: translate(-50%, 0%);
+            margin-top: 25px;
+            height: 30px;
+            background: #2f3640;
+            border-radius: 40px;
+            padding: 10px;
+            transition: .5s;
+        }
+
+        .search-btn{
+            color: #e84118;
+            float: right;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: 2f3640;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            
+            transition: .5s;
+        }
+
+        .input_bar{
+            border: none;
+            background: none;
+            outline: none;
+            float: left;
+            padding: 0;
+            color:white;
+            font-size: 16px;
+            transition: 0.4s;
+            line-height: 30px;
+            width: 0px; 
+            transition: .5s;
+        }
+        
+        .search-bar:hover>.input_bar{
+            width: 200px;  
+            padding: 0 6px;
+            
+            transition: .5s;          
+        }
+        a{
+            text-decoration: none;
+        }
+
+        .list{
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            margin-top: 100px;
+            width: 500px;
+            /* background: red; */
+        }
+        table{
+            border: none;
+
+        }
+        table th{
+            background: #2f3640;
+            width: 500px;
+            height: 40px;
+            border-top-left-radius: 10px;
+            border-top-right-radius: 10px;
+            color: #fff;
+            text-transform: uppercase;
+        }
+        .element{
+            background-image: linear-gradient(120deg, #2E86C1, rgb(101, 144, 173));  
+            color: #1d0555;
+            /* color: #fff; */
+            border-bottom: #2f3640 solid 5px;
+            font-weight: bold;
+        }
+        tr:nth-child(odd){
+            color: black;
+            background-image: linear-gradient(120deg, #fff, rgb(228, 224, 224));
+        }
+        tr:nth-last-child(){
+            color: red;
+            border-bottom-left-radius: 10px;
+            border-bottom-right-radius: 10px;
+        }
+        .checkbox{
+            width: 45px;
+            height: 45px; 
+            align-content: center;
+            justify-content: center;
+            align-items: center;
+            
+        }
+        .fa-check, .fa-times, .fa-trash-alt{
+            margin-left: 35%;
+        }
+        .element_todo{
+            padding-left: 10px;
+        }
+        .item{
+            margin-left: 5px;
+            height:33px;
+            width: 33px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="search-bar">
+        <input class="input_bar" id="input"type="text" placeholder="Enter Todo">
+        <div onclick="search()" id="button_add" class='search-btn'>
+            <i class="fas fa-plus"></i>
+        </div>
+        </div>
+        <div class="list">
+            <table id="table_body">
+                <th colspan="3">
+                    My todo
+                </th>
+                   <!-- <tr class="element">
+                        <td class="checkbox" onclick="check_box(1, 0)"><i class="fas fa-check"></i></td> <td class="element_todo">How list works</td>
+                        <td class="checkbox" onclick="delete_item(1)"><i class="fas fa-trash-alt"></i></td>
+                </tr>
+                <tr class="element">
+                        <td class="checkbox"><i class="fas fa-times"></i></td> <td class="element_todo">Bali kahan h re bosdi</td>
+                        <td class="checkbox" onclick="delete_item(2)"><i class="fas fa-trash-alt"></i></td>
+                </tr> -->
+            </table>
+        </div>
+    </div>
+    <script>
+        // var nut = document.addEventListener('click', event =>{
+        //     // console.log('hey here')
+        //     // console.log(event.path[0])
+        // })
+        document.addEventListener('keydown',event =>{
+            if(event.key == 'Enter'){
+                search()
+            }
+        })
+        function search(){
+            var table_body = document.getElementById('table_body')
+            var todo = document.createTextNode(document.getElementById('input').value)
+            if(document.getElementById('input').value === ""){
+                return false
+            }
+            for(let i=0;  i<document.getElementsByTagName('tr').length; i++){
+                if(document.getElementById('input').value === document.getElementsByTagName('tr')[i].childNodes[1].innerText){
+                    alert('todo Alredy Exist');
+                    return false;
+                }
+            }
+            var table_row = document.createElement('tr')
+            var node_check = document.createElement('td')
+            var node_text = document.createElement('td')
+            var node_trash = document.createElement('td')
+
+            node_check.setAttribute('class', 'checkbox')
+            node_trash.setAttribute('class', 'checkbox')
+            node_text.setAttribute('class', 'element_todo')
+            table_row.setAttribute('class', 'element')
+
+            var check_png = document.createElement('i')
+            check_png.setAttribute('class', 'fas fa-times')
+            node_check.appendChild(check_png)
+
+            var trash_png = document.createElement('i')
+            trash_png.setAttribute('class', 'fas fa-trash-alt')
+            node_trash.appendChild(trash_png)
+
+            node_trash.setAttribute('onclick', 'delete_item(this)') 
+            node_check.setAttribute('onclick', 'check_box(this)')
+
+
+
+            node_text.appendChild(todo)
+            table_row.appendChild(node_check)
+            table_row.appendChild(node_text)
+            table_row.appendChild(node_trash)
+            table_body.appendChild(table_row)  
+            document.getElementById('input').value =""
+        }
+         function delete_item(c){
+             c.parentElement.remove()
+         }
+         function check_box(obj){
+             if(obj.childNodes[0].classList[1] == "fa-times"){
+                obj.childNodes[0].classList.replace('fa-times', 'fa-check')
+                }
+             else{
+                obj.childNodes[0].classList.replace('fa-check', 'fa-times')
+                }
+         }
+
+    </script>
+</body>
+</html>
